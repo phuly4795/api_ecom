@@ -1,0 +1,70 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.main{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+.header{
+  /* background-color: antiquewhite; */
+  width: 100%;
+}
+.menu{
+    display: flex;
+    justify-content: space-between;
+}
+.menu>.logo,.mainMenu{
+    width: 50%;
+}
+.menu>.logo{
+    padding: 1%;
+}
+
+.mainMenu > ul{
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+    padding-top: 2%;
+}
+.mainMenu > ul > li{
+   font-size: 18px;
+   font-weight: 700;
+}
+.mainMenu > ul > li > a{
+    text-decoration: none;
+    color: chocolate;
+ }
+.body{
+  /* background-color:  orangered; */
+  width: 100%;
+  height: 100vh;
+}
+
+.mainHome>h3{
+    text-decoration: underline;
+    color: cadetblue;
+    margin-left: 5%;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.mainHome>.container>.row{
+    padding: 2% 0 1% 0;
+}
+.loginHome{
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+.loginHome>.form-login{
+    padding: 5%;
+    border: 1px solid brown ;
+}

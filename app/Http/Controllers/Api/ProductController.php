@@ -17,10 +17,21 @@ class ProductController extends Controller
        try {
             $List = Product::all();
 
+            $List_new = [];
+            foreach($List as $item){
+                $List_new[] = [
+                    "code"  => $item->code, 
+                    "name"  => $item->name, 
+                    "price"  => $item->price, 
+                    "image"  => $item->image, 
+                    "catgory"  => $item->category->name, 
+                    "mota"  => $item->mota, 
+                ];
+            }
             return response()->json([
                 'status' => 201,
                 'message' =>"Get data success",
-                'data' =>$List,
+                'data' =>$List_new,
             ], 201);
        } catch (\Throwable $th) {
             return response()->json([
@@ -38,8 +49,9 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         try {
+            $now = now()->format('dmY'); 
             $validator = Validator::make($request->all(), [
-                'code' => 'required|string|unique:categories',
+                'code' => 'required|string|unique:products',
                 'name' => 'required|string|max:255',
             ]);
         
@@ -49,20 +61,31 @@ class ProductController extends Controller
                     'errors' => $validator->errors(),
                 ], 400);
             }
-            $CreateCate = Product::create([
+
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $filename = $now.'-'.$image->getClientOriginalName();
+                $image->move(public_path('images'), $filename);
+            }
+
+            $CreateProduct = Product::create([
                 "code" => $request->code,
                 "name" => $request->name,
+                "price" => $request->price,
+                "mota" => $request->mota,
+                "category_id" => $request->category_id,
+                "image" => $filename
             ]);
 
             return response()->json([
                 'status' => 201,
                 'message' =>"add new Product success",
-                'data' => $CreateCate,
+                'data' => $CreateProduct,
             ], 201);
        } catch (\Throwable $th) {
             return response()->json([
                 'status' => 500,
-                'message' =>"server error - ". $th,
+                'message' =>"server error - " . $th,
                 'data' =>[],
             ], 500);
        }
