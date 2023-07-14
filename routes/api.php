@@ -52,9 +52,14 @@ Route::prefix('product')->group(function(){
 });
 
 Route::middleware('api', 'auth','CheckLogin')->prefix('cart')->group(function(){
+    // Thêm sản phẩm vào giỏ hàng
     Route::post('/add', [CartController::class, 'store']);
-    Route::put('update/{id}', [CartController::class, 'update']);
-    Route::delete('delete/{id}', [CartController::class, 'destroy']);
+    // show giỏ hàng
+    Route::get('/list', [CartController::class, 'index']);
+    // update số lượng
+    Route::put('update/{productCode}', [CartController::class, 'update']);
+    //  xóa giỏ hàng hoặc xóa sản phẩm
+    Route::delete('delete', [CartController::class, 'destroy']);
 });
 
 Route::middleware('api', 'auth','CheckLogin')->prefix('order')->group(function(){
@@ -64,8 +69,8 @@ Route::middleware('api', 'auth','CheckLogin')->prefix('order')->group(function()
 });
 
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
-    Route::post('login',[AuthController::class,'login']);
-    Route::get('login',[AuthController::class,'FormLogin'])->name('login');
+    Route::post('login',[AuthController::class,'login'])->name('login');
+    Route::get('login',[AuthController::class,'login'])->name('login');
     Route::post('register',[AuthController::class,'register']);
     Route::post('logout',[AuthController::class,'logout']);
     Route::post('refresh',[AuthController::class,'refresh']);

@@ -64,7 +64,7 @@
     flex-direction: column;
     flex-wrap: nowrap;
 }
-.loginHome>.form-login{
+.loginHome>form>.form-login{
     padding: 5%;
     border: 1px solid brown ;
 }

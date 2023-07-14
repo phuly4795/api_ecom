@@ -3,19 +3,19 @@
     <div class="container">
         <div class="loginHome">
             <h3>Đăng nhập</h3>
-            <form id="form_login" name="form_login">
+            <form id="login-form" method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="form-login">
                     <div class="mb-3 row">
                         <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-10">
-                          <input type="email" class="form-control" id="staticEmail">
+                          <input type="email" class="form-control" id="email" name="email">
                         </div>
                       </div>
                       <div class="mb-3 row">
                         <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
                         <div class="col-sm-10">
-                          <input type="password" class="form-control" id="inputPassword">
+                          <input type="password" class="form-control" id="password" name="password">
                         </div>
                     </div>
                     <div class="mb-3 row">
@@ -23,10 +23,11 @@
                     </div>
                 </div>
             </form>
+
         </div>
     </div>
 
-    <script>
+    {{-- <script>
         function login(event) {
             event.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit (nếu nó là nút trong một form)
 
@@ -80,5 +81,51 @@
 
         // Gán sự kiện submit form đăng nhập
         $("#form_login").on("submit", login);
+    </script> --}}
+
+    <script>
+        $(document).ready(function() {
+            $('#login-form').submit(function(e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var method = form.attr('method');
+                var data = form.serialize();
+                console.log(data,method, url, form);
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: data,
+                    success: function(response) {    
+         
+                        var Token = response.access_token;
+                        var user = response.user;
+                        localStorage.setItem('token', Token);
+                        localStorage.setItem('user', user);
+
+                        Toastify({
+                        text: response.message,
+                        duration: 3000,
+                        gravity: "bottom",
+                        backgroundColor: "green",
+                        stopOnFocus: true
+                    }).showToast();
+
+                    window.location.href = response.redirect_url;     
+                        
+                        
+                    },
+                    error: function(response) {
+                        Toastify({
+                        text:  response.message ? response.message: response.statusText,
+                        duration: 3000,
+                        gravity: "bottom",
+                        backgroundColor: "red",
+                        stopOnFocus: true
+                    }).showToast();
+                    }
+                });
+            });
+        });
     </script>
 @endsection

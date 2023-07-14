@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 class HomeController extends Controller
 {
     public function index() {
-        return view ('welcome');
+        return view ('page.home');
     }
     public function login() {
       

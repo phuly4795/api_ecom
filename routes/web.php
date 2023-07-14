@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome')->name('home');
 // });
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/login', [HomeController::class, 'login'])->name('formLogin');
 
 // Route::get('/csrf-token', function() {
 //     return response()->json(['token' => csrf_token()]);

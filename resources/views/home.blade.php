@@ -16,6 +16,15 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 <body>
+    @php
+    $checkAuth = []; // Thay 'key' bằng key bạn đã sử dụng trong sessionStorage 
+    if($checkAuth){
+        dd($checkAuth);
+    }   
+ 
+    @endphp
+
+
     <div class="main">
         <div class="header">
             <div class="menu">
@@ -47,5 +56,27 @@
         </div>
     </div>
   
+
+    <script>
+       var getUser = localStorage.getItem('user'); 
+    //    console.log(getUser);
+
+
+       $.ajax({
+            url: '/',
+            type: 'get',
+            data: { checkAuth: getUser },
+            success: function(response) {
+                // Xử lý phản hồi thành công (giá trị đã được gán cho biến PHP)
+                console.log(response);
+            },
+            error: function(xhr) {
+                // Xử lý lỗi
+                console.log(xhr.responseText);
+            }
+        });
+
+    </script>
+
 </body>
 </html>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\CartDetail;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
@@ -25,15 +26,22 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         try {
+            $total = 0;
             $cart_id = $request->cart_id;
             $cart = Cart::findOrFail($cart_id);
             $autoCode = $this->getAutoOrderCode();
+            $total_price = CartDetail::select('quatity', 'price')->where('cart_id', $cart_id)->get();
+     
+            foreach($total_price as $item) {        
+                $total += $item->price * $item->quatity;
+            }
+            
             $order = Order::create([
                 'user_id' => auth()->user()->id,
                 'status' => $request->status,
                 'code' => $autoCode,
                 'cart_id' => $cart_id,
-                'total_price' => $cart->total_price,
+                'total_price' => $total,
                 'address' => $cart->address,
                 'created_by'         => auth()->user()->id,
             ]);
@@ -63,8 +71,7 @@ class OrderController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 "status" => 500,
-                "message" => "server error ".$th,
-           
+                "message" => "server error ".$th,      
             ],500);
         }
     }

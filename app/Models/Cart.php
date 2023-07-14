@@ -10,7 +10,7 @@ class Cart extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['user_id', 'total_price', 'address','created_by', 'updated_by', 'deleted_by'];
+    protected $fillable = ['user_id', 'address','created_by', 'updated_by', 'deleted_by'];
     
     public function details()
     {

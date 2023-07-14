@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\CartDetail;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CartDetailController extends Controller
@@ -22,19 +23,24 @@ class CartDetailController extends Controller
      */
     public function store($request, $data)
     {
-        $checkCartDetail = CartDetail::where('product_code', $data->product_code)
-        ->where('cart_id',  $request->id)
+        
+        $checkCartDetail = CartDetail::where('product_code', $request->product_code)
+        ->where('cart_id',  $data->id)
         ->first();
+
+        $product = Product::where('code',$request->product_code)->first();
+
         if($checkCartDetail){
             $checkCartDetail->update([
-                'quatity' => $checkCartDetail->quatity +  $data->quatity
-            ]);
-        }else{
+                'quatity' => !empty($request->quatity) ?  $checkCartDetail->quatity +  $request->quatity : $checkCartDetail->quatity + 1,
+                'updated_by' =>auth()->user()->id
+           ]);
+        }else{ 
             CartDetail::create([
-                'cart_id' => $request->id,
-                'product_code' => $data->product_code,
-                'quatity' => $data->quatity,
-                'price' => $data->price,
+                'cart_id' => $data->id,
+                'product_code' => $request->product_code,
+                'quatity' => 1,
+                'price' => $product->price,
                 'created_by' =>auth()->user()->id
             ]);
         }
@@ -51,9 +57,11 @@ class CartDetailController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $cart, string $productCode)
     {
-        //
+        $cartDetail = CartDetail::where('cart_id', $cart->id)->where('product_code',$productCode )->update([
+            "quatity" => $request->quatity
+        ]);
     }
 
     /**

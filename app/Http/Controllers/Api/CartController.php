@@ -14,7 +14,13 @@ class CartController extends Controller
      */
     public function index()
     {
-        //
+        $user = auth()->user()->id;
+        $cart = Cart::with('details')->where('user_id', $user)->get();
+        return response()->json([
+            "status" => "201",
+            "message" => "Get data success",
+            "data" => $cart
+        ], 201);
     }
 
     /**
@@ -38,20 +44,10 @@ class CartController extends Controller
                 'created_by' => auth()->user()->id
             ]);
         }
+        // dd($request,$cart);
         $cartDetailController = new CartDetailController();
-        $createCartDetail = $cartDetailController->store($cart, $request);
-    
-        $total_price = CartDetail::select('quatity', 'price')->where('cart_id', $cart->id)->get();
-     
-        foreach($total_price as $item) {
-          
-            $total += $item->price * $item->quatity;
-        }
-          
-        $cart->update([
-            'total_price' => $total
-        ]);
-    
+        $cartDetailController->store($request, $cart);
+
         return response()->json([
             'status' => 201,
             'message' => "Add cart success",           
@@ -65,27 +61,39 @@ class CartController extends Controller
        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $productCode)
     {
-        //
+        $cart = Cart::where('user_id', auth()->user()->id)->first();
+
+        $cartDetailController = new CartDetailController();
+        $cartDetailController->update($request, $cart, $productCode);
+        return response()->json([
+            "status" => 201,
+            "message" => "update quatity success",
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        //
+        $input = $request->all();
+        if($input['product_code']){
+            $cartDetail = CartDetail::where('cart_id', $input['cart_id'])->where('product_code', $input['product_code'])->delete();
+        }
+        else{
+            $cartDetail = CartDetail::where('cart_id', $input['cart_id'])->delete();
+        }
+        
+        return response()->json([
+            "status" => 201,
+            "message" => "delete success",
+            "data" => $cartDetail
+        ],201);
     }
 }
